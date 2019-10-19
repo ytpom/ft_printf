@@ -10,32 +10,40 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = test
+NAME = libftprintf.a
 
-SRC = main.c
-LIBDIR = libft
+INC = includes
+SRC = ft_printf.c
+LIB = libft
 
 OBJ = $(SRC:.c=.o)
 
 CC = gcc
 FLAG = -Wall -Wextra -Werror
-LIBFLAGS = -L $(LIBDIR) -lft
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	make -C $(LIBDIR)
-	$(CC) $(FLAG) $(LIBFLAGS) $(OBJ) -o $(NAME)
+	make -C $(LIB)
+	cp $(LIB)/$(LIB).a ./$(NAME)
+	ar rc $(NAME) $(OBJ)
+	ranlib $(NAME)
 
 %.o: %.c
-	$(CC) $(FLAG) -c $< -o $@
+	$(CC) $(FLAG) -I $(INC) -c $< -o $@
 
 clean:
-	make clean -C $(LIBDIR)
+	make clean -C $(LIB)
 	rm -f $(OBJ)
 
 fclean: clean
-	make fclean -C $(LIBDIR)
+	make fclean -C $(LIB)
 	rm -f $(NAME)
 
 re: fclean all
+
+test:
+	$(CC) $(FLAG) -I $(INC) -L . -lftprintf main.c -o test
+
+clear: fclean
+	rm -f ./test
