@@ -1,6 +1,8 @@
 #include "ft_printf.h"
 
-int	main()
+int	main(int argc, char **argv)
 {
-	ft_putstr("Hello World!\n");
+	if (argc > 0)
+		ft_putstr(argv[1]);
+	ft_putstr("\n");
 }
