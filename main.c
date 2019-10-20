@@ -5,6 +5,10 @@ int	main()
 {
 	const char* s = "Hello";
 	printf("Strings:\n");
+	printf("%%");
+	printf("%5%");
+	printf("%-5%");
+	printf("%.0%");
 	printf("\t.%10s.\n\t.%-10s.\n\t.%*s.\n", s, s, 10, s);
 
 	printf("Characters:\t%c %%\n", 65);
@@ -21,6 +25,10 @@ int	main()
 	printf("Hexadecimal:\t%a %A\n", 1.5, 1.5);
 
 	ft_printf("Strings:\n");
+	ft_printf("%%");
+	ft_printf("%5%");
+	ft_printf("%-5%");
+	ft_printf("%.0%");
 	ft_printf("\t.%10s.\n\t.%-10s.\n\t.%*s.\n", s, s, 10, s);
 
 	ft_printf("Characters:\t%c %%\n", 65);

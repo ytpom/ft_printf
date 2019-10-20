@@ -3,7 +3,7 @@
 
 # include "../libft/includes/libft.h"
 
-void ft_printf(char *,...); 				//Our printf function
+int ft_printf(char *,...); 				//Our printf function
 char* convert(unsigned int, int); 		//Convert integer number into octal, hex, etc.
 
 #endif

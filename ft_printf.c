@@ -2,7 +2,87 @@
 #include <stdio.h>
 #include "ft_printf.h"
 
-void ft_printf(char* format,...) 
+void	ft_putnbr_l(long long int n)
+{
+	if (n < 0)
+	{
+		ft_putchar('-');
+		n = -n;
+	}
+	if (n / 10)
+		ft_putnbr_l(n / 10);
+	ft_putchar(n % 10 + '0');
+}
+
+int		ft_nbr_len(int nb, int base)
+{
+	int i;
+
+	i = 0;
+	if (nb < 0)
+		nb *= -1;
+	while (nb > 0)
+	{
+		nb /= base;
+		i++;
+	}
+	return (i);
+}
+
+char	*ft_itoa_base(int value, int base)
+{
+	int		i;
+	int		n;
+	int		len;
+	char	*radix;
+	char	*result;
+
+	i = 0;
+	n = 0;
+	len = 0;
+	radix = "0123456789ABCDEF";
+	if (value == 0)
+		return ("0");
+//	if (base == 10 && value == -2147483648)
+//		return (ft_strdup("-2147483648"));
+	len = ft_nbr_len(value, base);
+	if (base == 10 && value < 0)
+		n = 1;
+	result = (char*)malloc(sizeof(char) * (len + n + 1));
+	if (result == NULL)
+		return (NULL);
+	if (n == 1)
+	{
+		result[0] = '-';
+		len++;
+	}
+	result[len] = '\0';
+	if (value < 0)
+		value *= -1;
+	while (len > n)
+	{
+		result[len - 1] = radix[value % base];
+		value /= base;
+		len--;
+	}
+	return (result);
+}
+
+char	*ft_strlow(char *str)
+{
+	int i;
+
+	i = 0;
+	while(str[i])
+	{
+		if (str[i] >= 'A' && str[i] <= 'Z')
+			str[i] = str[i] + 32;
+		i++;
+	}
+	return (str);
+}
+
+int ft_printf(char* format,...) 
 { 
 	char *traverse; 
 	unsigned int i; 
@@ -14,10 +94,16 @@ void ft_printf(char* format,...)
 	int left;
 	int right;
 	int tmp;
+	unsigned long int li;
+	char *str;
+	int flag;
+	size_t len;
 	
 	traverse = format;
-	while (*traverse) 
+	len = 0;
+	while (*traverse != '\0') 
 	{
+		flag = 0;
 		left = 0;
 		right = 0;
 		if (*traverse == '%')
@@ -25,8 +111,6 @@ void ft_printf(char* format,...)
 			traverse++;
 			if (*traverse == '\0')
 				break;
-			if (*traverse == '%')
-				ft_putchar ('%');
 			while(ft_isdigit(*traverse))
 			{
 				left = left * 10 + *traverse - '0';
@@ -47,34 +131,18 @@ void ft_printf(char* format,...)
 				left = i;
 				traverse++;
 			}
-			if (*traverse == 's')
-			{
-				s = va_arg(arg,char *);
-				tmp = left - ft_strlen(s);
-				while (tmp > 0)
-				{
-					ft_putchar(' ');
-					tmp--;
-				}
-				ft_putstr(s);
-				tmp = right - ft_strlen(s);
-				while (tmp > 0)
-				{
-					ft_putchar(' ');
-					tmp--;
-				}		
-			}
-			if (*traverse == 'c')
-			{
-				i = va_arg(arg,int);
-				ft_putchar(i);
-			}
 			if (*traverse == '.')
 			{
 				traverse++;
 				if (*traverse == '0')
 				{
 					traverse++;
+					if (*traverse == '%')
+					{
+						ft_putchar ('%');
+						len++;
+						continue;
+					}
 					i = va_arg(arg,int);
 					traverse++;
 					continue;
@@ -85,10 +153,56 @@ void ft_printf(char* format,...)
 					traverse++;
 				}
 			}
+			if (*traverse == '%')
+			{
+				tmp = left - 1;
+				while (tmp > 0)
+				{
+					ft_putchar(' ');
+					tmp--;
+					len++;
+				}
+				ft_putchar ('%');
+				len++;
+				tmp = right - 1;
+				while (tmp > 0)
+				{
+					ft_putchar(' ');
+					tmp--;
+					len++;
+				}
+			}
+			if (*traverse == 's')
+			{
+				s = va_arg(arg,char *);
+				tmp = left - ft_strlen(s);
+				while (tmp > 0)
+				{
+					ft_putchar(' ');
+					tmp--;
+					len++;
+				}
+				ft_putstr(s);
+				len += ft_strlen(s);
+				tmp = right - ft_strlen(s);
+				while (tmp > 0)
+				{
+					ft_putchar(' ');
+					tmp--;
+					len++;
+				}		
+			}
+			if (*traverse == 'c')
+			{
+				i = va_arg(arg,int);
+				ft_putchar(i);
+				len++;
+			}
 			if (*traverse == '+')
 			{
 				traverse++;
 				ft_putchar('+');
+				len++;
 			}
 			if (*traverse == 'd' || *traverse == 'i')
 			{
@@ -107,13 +221,67 @@ void ft_printf(char* format,...)
 					ft_putchar('0');
 					tmp = tmp / 10;
 				}
+				
 				ft_putnbr(i);
+				len += ft_nbr_len(i,10);
 			}
-			traverse++;
+			if (*traverse == 'u')
+			{
+				i = va_arg(arg,int);
+				li = i;
+				ft_putnbr_l(li);
+				len += ft_nbr_len(i,10);
+			}
+			if (*traverse == '#')
+			{
+				traverse++;
+				flag = 1;
+			}
+			if (*traverse == 'x')
+			{
+				i = va_arg(arg,int);
+				str = ft_strlow(ft_itoa_base(i,16));
+				if (flag)
+				{
+					ft_putstr("0x");
+					len += 2;
+				}
+				ft_putstr(str);
+				len += ft_strlen(str);
+			}
+			if (*traverse == 'X')
+			{
+				i = va_arg(arg,int);
+				str = ft_itoa_base(i,16);
+				if (flag)
+				{
+					ft_putstr("0X");
+					len += 2;
+				}
+				ft_putstr(str);
+				len += ft_strlen(str);
+			}
+			if (*traverse == 'o')
+			{
+				i = va_arg(arg,int);
+				str = ft_strlow(ft_itoa_base(i,8));
+				if (flag)
+				{
+					ft_putstr("0");
+					len++;
+				}
+				ft_putstr(str);
+				len += ft_strlen(str);
+			}
+				traverse++;
 		}
 		//while( *traverse != '%' || *traverse != '\0' ) 
 		//{ 
+		if (*traverse != '\0')
+		{
 			ft_putchar(*traverse);
+			len++;
+		}
 		//	traverse++; 
 		//} 
 		
@@ -147,11 +315,15 @@ void ft_printf(char* format,...)
 						ft_putstr(convert(i,16));
 						break; 
 		}*/
-		traverse++;
+		if (*traverse != '\0')
+		{
+			traverse++;
+		}
 	} 
 	
 	//Module 3: Closing argument list to necessary clean-up
 	va_end(arg); 
+	return (len);
 } 
 
 char *convert(unsigned int num, int base) 

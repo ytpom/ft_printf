@@ -45,7 +45,7 @@ re: fclean all
 test:
 	$(CC) $(FLAG) -I $(INC) -L . -lftprintf main.c -o test
 
-clear:
+clear: fclean
 	rm -f $(NAME)
 	rm -f ./test
 
