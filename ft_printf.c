@@ -83,7 +83,7 @@ char	*ft_strlow(char *str)
 int ft_printf(char* format,...) 
 { 
 	char *traverse; 
-	unsigned int i; 
+	long long int i; 
 	char *s; 
 	
 	//Module 1: Initializing Myprintf's arguments 
@@ -110,6 +110,11 @@ int ft_printf(char* format,...)
 			if (*traverse == '\0')
 				break;
 			while(ft_isdigit(*traverse))
+			{
+				left = left * 10 + *traverse - '0';
+				traverse++;
+			}
+			while(*traverse == ' ')
 			{
 				left = left * 10 + *traverse - '0';
 				traverse++;
@@ -212,7 +217,6 @@ int ft_printf(char* format,...)
 					right = right * 10;
 					tmp = tmp / 10;
 				}
-				//printf("left = %lld\n", ft_power(10,left));
 				tmp = ft_power(10,left) / right;
 				while (tmp > 10)
 				{
@@ -235,23 +239,78 @@ int ft_printf(char* format,...)
 				traverse++;
 				flag = 1;
 			}
+			if (*traverse == 'l')
+			{
+				traverse++;
+				flag = 2;
+			}
+			if (*traverse == 'l')
+			{
+				traverse++;
+				flag = 3;
+			}
+			if (*traverse == 'h')
+			{
+				traverse++;
+				flag = 4;
+			}
+			if (*traverse == 'h')
+			{
+				traverse++;
+				flag = 5;
+			}
 			if (*traverse == 'x')
 			{
-				i = va_arg(arg,int);
+				if (flag == 5)
+					i = (unsigned char)va_arg(arg,int);
+				else if (flag == 4)
+					i = (unsigned short)va_arg(arg,int);
+				else if (flag == 3)
+					i = va_arg(arg,unsigned long long); 
+				else if (flag == 2)
+					i = va_arg(arg,unsigned long);
+				else
+					i = va_arg(arg,unsigned int);
 				str = ft_strlow(ft_itoa_base(i,16));
-				if (flag)
+				tmp = left - ft_strlen(str);
+				while (tmp > 0)
+				{
+					ft_putchar(' ');
+					tmp--;
+					len++;
+				}
+
+				if (flag == 1)
 				{
 					ft_putstr("0x");
 					len += 2;
 				}
 				ft_putstr(str);
 				len += ft_strlen(str);
+
+				tmp = right - ft_strlen(str);
+				while (tmp > 0)
+				{
+					ft_putchar(' ');
+					tmp--;
+					len++;
+				}	
+
 			}
 			if (*traverse == 'X')
 			{
-				i = va_arg(arg,int);
+				if (flag == 5)
+					i = (unsigned char)va_arg(arg,int);
+				else if (flag == 4)
+					i = (unsigned short)va_arg(arg,int);
+				else if (flag == 3)
+					i = va_arg(arg,unsigned long long); 
+				else if (flag == 2)
+					i = va_arg(arg,unsigned long);
+				else
+					i = va_arg(arg,unsigned int);
 				str = ft_itoa_base(i,16);
-				if (flag)
+				if (flag == 1)
 				{
 					ft_putstr("0X");
 					len += 2;
@@ -263,7 +322,7 @@ int ft_printf(char* format,...)
 			{
 				i = va_arg(arg,int);
 				str = ft_strlow(ft_itoa_base(i,8));
-				if (flag)
+				if (flag == 1)
 				{
 					ft_putstr("0");
 					len++;
