@@ -95,6 +95,7 @@ int ft_printf(char* format,...)
 	unsigned long int li;
 	char *str;
 	int flag;
+	int flag2;
 	size_t len;
 	
 	traverse = format;
@@ -102,6 +103,7 @@ int ft_printf(char* format,...)
 	while (*traverse != '\0') 
 	{
 		flag = 0;
+		flag2 = 0;
 		left = 0;
 		right = 0;
 		if (*traverse == '%')
@@ -109,6 +111,36 @@ int ft_printf(char* format,...)
 			traverse++;
 			if (*traverse == '\0')
 				break;
+			if (*traverse == '#')
+			{
+				traverse++;
+				flag2 = 1;
+			}
+			if (*traverse == 'l')
+			{
+				traverse++;
+				flag = 2;
+			}
+			if (*traverse == 'l')
+			{
+				traverse++;
+				flag = 3;
+			}
+			if (*traverse == 'h')
+			{
+				traverse++;
+				flag = 4;
+			}
+			if (*traverse == 'h')
+			{
+				traverse++;
+				flag = 5;
+			}
+			if (*traverse == '0')
+			{
+				traverse++;
+				flag = 6;
+			}
 			while(ft_isdigit(*traverse))
 			{
 				left = left * 10 + *traverse - '0';
@@ -134,7 +166,7 @@ int ft_printf(char* format,...)
 				left = i;
 				traverse++;
 			}
-			if (*traverse == '.')
+			if (*traverse == '.' && left == 0)
 			{
 				traverse++;
 				if (*traverse == '0')
@@ -155,7 +187,7 @@ int ft_printf(char* format,...)
 					left = left * 10 + *traverse - '0';
 					traverse++;
 				}
-			}
+			}			
 			if (*traverse == '%')
 			{
 				tmp = left - 1;
@@ -195,16 +227,18 @@ int ft_printf(char* format,...)
 					len++;
 				}		
 			}
-			if (*traverse == 'c')
-			{
-				i = va_arg(arg,int);
-				ft_putchar(i);
-				len++;
-			}
 			if (*traverse == '+')
 			{
 				traverse++;
 				ft_putchar('+');
+				len++;
+			}
+			//if (*traverse != 'c' && *traverse != 'd' && *traverse != 'i' && *traverse != 'u' && *traverse != 'x' && *traverse != 'X' && *traverse != 'o' && *traverse != '\0')
+			//	traverse++;
+			if (*traverse == 'c')
+			{
+				i = va_arg(arg,int);
+				ft_putchar(i);
 				len++;
 			}
 			if (*traverse == 'd' || *traverse == 'i')
@@ -234,31 +268,6 @@ int ft_printf(char* format,...)
 				ft_putnbr_l(li);
 				len += ft_nbr_len(i,10);
 			}
-			if (*traverse == '#')
-			{
-				traverse++;
-				flag = 1;
-			}
-			if (*traverse == 'l')
-			{
-				traverse++;
-				flag = 2;
-			}
-			if (*traverse == 'l')
-			{
-				traverse++;
-				flag = 3;
-			}
-			if (*traverse == 'h')
-			{
-				traverse++;
-				flag = 4;
-			}
-			if (*traverse == 'h')
-			{
-				traverse++;
-				flag = 5;
-			}
 			if (*traverse == 'x')
 			{
 				if (flag == 5)
@@ -275,12 +284,15 @@ int ft_printf(char* format,...)
 				tmp = left - ft_strlen(str);
 				while (tmp > 0)
 				{
-					ft_putchar(' ');
+					if (flag == 6)
+						ft_putchar('0');
+					else	
+						ft_putchar(' ');
 					tmp--;
 					len++;
 				}
 
-				if (flag == 1)
+				if (flag2 == 1 && ft_strcmp (str,"0"))
 				{
 					ft_putstr("0x");
 					len += 2;
@@ -310,7 +322,7 @@ int ft_printf(char* format,...)
 				else
 					i = va_arg(arg,unsigned int);
 				str = ft_itoa_base(i,16);
-				if (flag == 1)
+				if (flag2 == 1)
 				{
 					ft_putstr("0X");
 					len += 2;
@@ -330,10 +342,9 @@ int ft_printf(char* format,...)
 				ft_putstr(str);
 				len += ft_strlen(str);
 			}
+			if (*traverse != '\0')
 				traverse++;
 		}
-		//while( *traverse != '%' || *traverse != '\0' ) 
-		//{ 
 		if (*traverse != '\0')
 		{
 			ft_putchar(*traverse);

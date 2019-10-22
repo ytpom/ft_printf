@@ -15,7 +15,7 @@ int	main()
 
 	printf("Integers\n");
 	printf("Decimal:\t%i %d %.6i %i %.0i123 %+i %u\n", 1, 2, 3, 0, 0, 4, -1);
-	printf("Hexadecimal:\t%x %x %X %#x %x %x %d\n", 5, 10, 10, 6, 42, -42, -42);
+	printf("Hexadecimal:\t%x %x %X %#x %x %x %d %#x\n", 5, 10, 10, 6, 42, -42, -42, 0);
 	printf("Octal:\t%o %#o %#o\n", 10, 10, 4);
 
 	printf("Floating point\n");
@@ -35,7 +35,7 @@ int	main()
 
 	ft_printf("Integers\n");
 	ft_printf("Decimal:\t%i %d %.6i %i %.0i123 %+i %u\n", 1, 2, 3, 0, 0, 4, -1);
-	ft_printf("Hexadecimal:\t%x %x %X %#x %x %x %d\n", 5, 10, 10, 6, 42, -42, -42);
+	ft_printf("Hexadecimal:\t%x %x %X %#x %x %x %d %#x\n", 5, 10, 10, 6, 42, -42, -42, 0);
 	ft_printf("Octal:\t%o %#o %#o\n", 10, 10, 4);
 
 	ft_printf("Floating point\n");
