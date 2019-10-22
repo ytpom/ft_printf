@@ -14,7 +14,7 @@ void	ft_putnbr_l(long long int n)
 	ft_putchar(n % 10 + '0');
 }
 
-int		ft_nbr_len(int nb, int base)
+int		ft_nbr_len(long long nb, int base)
 {
 	int i;
 
@@ -29,7 +29,7 @@ int		ft_nbr_len(int nb, int base)
 	return (i);
 }
 
-char	*ft_itoa_base(int value, int base)
+char	*ft_itoa_base(long long value, int base)
 {
 	int		i;
 	int		n;
@@ -43,11 +43,9 @@ char	*ft_itoa_base(int value, int base)
 	radix = "0123456789ABCDEF";
 	if (value == 0)
 		return ("0");
-//	if (base == 10 && value == -2147483648)
-//		return (ft_strdup("-2147483648"));
-	len = ft_nbr_len(value, base);
 	if (base == 10 && value < 0)
 		n = 1;
+	len = ft_nbr_len(value, base);
 	result = (char*)malloc(sizeof(char) * (len + n + 1));
 	if (result == NULL)
 		return (NULL);
