@@ -82,7 +82,7 @@ char	*ft_strlow(char *str)
 
 int ft_printf(char* format,...) 
 { 
-	char *traverse; 
+	char *symb; 
 	long long int i; 
 	char *s; 
 	
@@ -98,97 +98,97 @@ int ft_printf(char* format,...)
 	int flag2;
 	size_t len;
 	
-	traverse = format;
+	symb = format;
 	len = 0;
-	while (*traverse != '\0') 
+	while (*symb != '\0') 
 	{
 		flag = 0;
 		flag2 = 0;
 		left = 0;
 		right = 0;
-		if (*traverse == '%')
+		if (*symb == '%')
 		{
-			traverse++;
-			if (*traverse == '\0')
+			symb++;
+			if (*symb == '\0')
 				break;
-			if (*traverse == '#')
+			if (*symb == '#')
 			{
-				traverse++;
+				symb++;
 				flag2 = 1;
 			}
-			if (*traverse == 'l')
+			if (*symb == 'l')
 			{
-				traverse++;
+				symb++;
 				flag = 2;
 			}
-			if (*traverse == 'l')
+			if (*symb == 'l')
 			{
-				traverse++;
+				symb++;
 				flag = 3;
 			}
-			if (*traverse == 'h')
+			if (*symb == 'h')
 			{
-				traverse++;
+				symb++;
 				flag = 4;
 			}
-			if (*traverse == 'h')
+			if (*symb == 'h')
 			{
-				traverse++;
+				symb++;
 				flag = 5;
 			}
-			if (*traverse == '0')
+			if (*symb == '0')
 			{
-				traverse++;
+				symb++;
 				flag = 6;
 			}
-			while(ft_isdigit(*traverse))
+			while(ft_isdigit(*symb))
 			{
-				left = left * 10 + *traverse - '0';
-				traverse++;
+				left = left * 10 + *symb - '0';
+				symb++;
 			}
-			while(*traverse == ' ')
+			while(*symb == ' ')
 			{
-				left = left * 10 + *traverse - '0';
-				traverse++;
+				left = left * 10 + *symb - '0';
+				symb++;
 			}
-			if (*traverse == '-')
+			if (*symb == '-')
 			{
-				traverse++;
-				while(ft_isdigit(*traverse))
+				symb++;
+				while(ft_isdigit(*symb))
 				{
-					right = right * 10 + *traverse - '0';
-					traverse++;
+					right = right * 10 + *symb - '0';
+					symb++;
 				}
 			}
-			if (*traverse == '*')
+			if (*symb == '*')
 			{
 				i = va_arg(arg,int);
 				left = i;
-				traverse++;
+				symb++;
 			}
-			if (*traverse == '.' && left == 0)
+			if (*symb == '.' && left == 0)
 			{
-				traverse++;
-				if (*traverse == '0')
+				symb++;
+				if (*symb == '0')
 				{
-					traverse++;
-					if (*traverse == '%')
+					symb++;
+					if (*symb == '%')
 					{
 						ft_putchar ('%');
 						len++;
 						continue;
 					}
 					i = va_arg(arg,int);
-					traverse++;
+					symb++;
 					continue;
 				}
-				while(ft_isdigit(*traverse))
+				while(ft_isdigit(*symb))
 				{
-					left = left * 10 + *traverse - '0';
-					traverse++;
+					left = left * 10 + *symb - '0';
+					symb++;
 				}
 			}			
-			if (*traverse == '%')
+			if (*symb == '%')
 			{
 				tmp = left - 1;
 				while (tmp > 0)
@@ -207,7 +207,7 @@ int ft_printf(char* format,...)
 					len++;
 				}
 			}
-			if (*traverse == 's')
+			if (*symb == 's')
 			{
 				s = va_arg(arg,char *);
 				tmp = left - ft_strlen(s);
@@ -227,21 +227,21 @@ int ft_printf(char* format,...)
 					len++;
 				}		
 			}
-			if (*traverse == '+')
+			if (*symb == '+')
 			{
-				traverse++;
+				symb++;
 				ft_putchar('+');
 				len++;
 			}
-			//if (*traverse != 'c' && *traverse != 'd' && *traverse != 'i' && *traverse != 'u' && *traverse != 'x' && *traverse != 'X' && *traverse != 'o' && *traverse != '\0')
-			//	traverse++;
-			if (*traverse == 'c')
+			//if (*symb != 'c' && *symb != 'd' && *symb != 'i' && *symb != 'u' && *symb != 'x' && *symb != 'X' && *symb != 'o' && *symb != '\0')
+			//	symb++;
+			if (*symb == 'c')
 			{
 				i = va_arg(arg,int);
 				ft_putchar(i);
 				len++;
 			}
-			if (*traverse == 'd' || *traverse == 'i')
+			if (*symb == 'd' || *symb == 'i')
 			{
 				i = va_arg(arg,int);
 				tmp = i;
@@ -261,14 +261,14 @@ int ft_printf(char* format,...)
 				ft_putnbr(i);
 				len += ft_nbr_len(i,10);
 			}
-			if (*traverse == 'u')
+			if (*symb == 'u')
 			{
 				i = va_arg(arg,int);
 				li = i;
 				ft_putnbr_l(li);
 				len += ft_nbr_len(i,10);
 			}
-			if (*traverse == 'x')
+			if (*symb == 'x')
 			{
 				if (flag == 5)
 					i = (unsigned char)va_arg(arg,int);
@@ -309,7 +309,7 @@ int ft_printf(char* format,...)
 				}	
 
 			}
-			if (*traverse == 'X')
+			if (*symb == 'X')
 			{
 				if (flag == 5)
 					i = (unsigned char)va_arg(arg,int);
@@ -330,7 +330,7 @@ int ft_printf(char* format,...)
 				ft_putstr(str);
 				len += ft_strlen(str);
 			}
-			if (*traverse == 'o')
+			if (*symb == 'o')
 			{
 				i = va_arg(arg,int);
 				str = ft_strlow(ft_itoa_base(i,8));
@@ -342,21 +342,21 @@ int ft_printf(char* format,...)
 				ft_putstr(str);
 				len += ft_strlen(str);
 			}
-			if (*traverse != '\0')
-				traverse++;
+			if (*symb != '\0')
+				symb++;
 		}
-		if (*traverse != '\0')
+		if (*symb != '\0')
 		{
-			ft_putchar(*traverse);
+			ft_putchar(*symb);
 			len++;
 		}
-		//	traverse++; 
+		//	symb++; 
 		//} 
 		
-		//traverse++; 
+		//symb++; 
 		
 		//Module 2: Fetching and executing arguments
-		/*switch(*traverse) 
+		/*switch(*symb) 
 		{ 
 			case 'c' : i = va_arg(arg,int);		//Fetch char argument
 						ft_putchar(i);
@@ -383,9 +383,9 @@ int ft_printf(char* format,...)
 						ft_putstr(convert(i,16));
 						break; 
 		}*/
-		if (*traverse != '\0')
+		if (*symb != '\0')
 		{
-			traverse++;
+			symb++;
 		}
 	} 
 	
